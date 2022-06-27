@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon</title>
+
+    <style>
+
+        @import url('https://fonts.googleapis.com/css?family=Lato:300,400&display=swap');
+
+        *{
+            margin:0px;
+            padding:0px;
+            border:none;
+            outline:none;
+            box-sizing:border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .header{
+            height:6rem;
+            width:100vw;
+        }
+
+        .container{
+            height:100vh;
+            padding:0rem 3rem;
+            display:flex;
+            flex-wrap:wrap;
+            gap:1rem;
+        }
+
+
+        .box{
+            width: 160px;
+            height: 270px;
+            border:transparent;
+            border-radius:7px;
+            /* background-color:aquamarine; */
+            box-shadow: 0px 0px 20px 2px rgb(0,0,0,0.5);
+
+        }
+
+        .resimKutu{
+            height: 55%;
+            /* background-color:crimson; */
+            border-radius: 10px 10px 0px 0px;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+        }
+
+        img{
+            border-radius: 50%;
+            background-color:white;
+            width:110px;
+            height:110px;
+
+        }
+
+
+        .contentKutu{
+            height:45%;
+            /* background-color:coral; */
+            border-radius: 0px 0px 10px 10px;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            gap: 0.5rem;
+
+        }
+
+        .idKutu{
+            display:inline-block;
+            border-radius: 0.7rem;
+            padding: 0.3rem 0.5rem;
+            font-size:0.9rem;
+
+            background-color: rgba(0,0,0,0.15);
+        }
+
+        .baslikKutu{
+            text-align:center;
+            font-size: 1.2rem;
+            font-weight:700;
+            letter-spacing: 1px;
+
+        }
+        
+        .typeKutu{
+            text-align:center;
+            font-size:0.8rem;
+        }
+
+        .tip{
+            font-size:0.8rem;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="header">Pokedex</div>
+    <div class="container">
+        <div class="box">
+            <div class="resimKutu">
+                <img src="1.jpeg" class="resim" width="120" height="120">
+            </div>
+            <div class="contentKutu">
+                <p class="idKutu">#001</p>
+                <p class="baslikKutu">Bulbasaur</p>
+                
+                <span class="tip">Type:&nbsp;<span class="typeKutu">grass</span></span>
+            </div>
+        
+        </div>
+        
+    </div>
+
+    
+
+<script>
+
+    let url = "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0";
+
+
+    function getir(url){
+        let sonuc;
+        fetch(url).then(  // ilk fetch -- tüm kayıtları içeren response çek ! ardından json verisine çevir.
+            function(value){sonuc = value.json();return sonuc;}
+        ).then(
+            function(value){ 
+                for(let x of value.results){  // json verisinin içinden her bir pokemonun verisini ayrı ayrı fetch ile çek
+                    fetch(value.results[1].url).then(
+                        function(yanit){let cevap = yanit.json(); return cevap;}
+                    ).then(
+                        function(deger){// her pokemon verisini ayrı ayrı al.  html içindeki box kutusunu hazırla ve gerekli verileri box içine aktar.
+                            let renkSkala = {normal:"rgb(245,245,245)",fire:"rgb(253,223,223)",water:"rgb(222,243,253)",grass:"rgb(222,253,224)",electric:"rgb(252,247,222)",ice:"rgb(152,216,216)",fighting:"rgb(230,224,212)",poison:"rgb(152,215,165)",ground:"rgb(244,231,218)",psychic:"rgb(234,237,161)",bug:"rgb(248,213,163)",rock:"rgb(213,213,212)",ghost:"rgb(112,88,152)",dark:"rgb(112,88,72)",dragon:"rgb(151,179,230)",steel:"rgb(184,184,208)",fairy:"rgb(252,234,255)"}
+                            // console.log(deger);
+                            // console.log(deger.id);
+                            // console.log(deger.name);
+                            // console.log(deger.types[1].type.name);
+                            // console.log(deger.sprites.front_shiny);
+                            let box = document.createElement('div');
+                            box.classList.add('box');
+                            box.style.backgroundColor = renkSkala[deger.types[1].type.name];
+                            let resimKutu = document.createElement('div');
+                            resimKutu.classList.add('resimKutu');
+                            let resim = document.createElement('img');
+                            resim.src = deger.sprites.front_shiny;
+                            resim.style.borderRadius = "50%";
+                            resimKutu.appendChild(resim);
+                            box.appendChild(resimKutu);
+                            let contentKutu = document.createElement('div');
+                            contentKutu.classList.add('contentKutu');
+                            let idKutu = document.createElement('p');
+                            idKutu.innerHTML = "#0" + deger.id.toString();
+                            idKutu.classList.add('idKutu');
+                            let baslikKutu = document.createElement('p');
+                            baslikKutu.classList.add('baslikKutu');
+                            baslikKutu.innerHTML = deger.name;
+                            let tip = document.createElement('span');
+                            tip.classList.add('tip');
+                            let typeKutu = document.createElement('span');
+                            typeKutu.classList.add('typeKutu');
+                            typeKutu.innerHTML = deger.types[1].type.name;
+                            tip.appendChild(typeKutu);
+                            contentKutu.appendChild(idKutu);
+                            contentKutu.appendChild(baslikKutu);
+                            contentKutu.appendChild(tip);
+                            box.appendChild(contentKutu);
+
+                            document.getElementsByClassName('container')[0].appendChild(box);
+                            // box'ları içeren container içine box'ı ekle
+                            
+                        }
+                    );
+                }
+                    
+            }
+        );
+    }
+
+    getir(url);
+
+
+
+    </script>
+</body>
+</html>
