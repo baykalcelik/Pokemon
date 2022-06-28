@@ -135,7 +135,7 @@
         ).then(
             function(value){ 
                 for(let x of value.results){  // json verisinin içinden her bir pokemonun verisini ayrı ayrı fetch ile çek
-                    fetch(value.results[1].url).then(
+                    fetch(x.url).then(
                         function(yanit){let cevap = yanit.json(); return cevap;}
                     ).then(
                         function(deger){// her pokemon verisini ayrı ayrı al.  html içindeki box kutusunu hazırla ve gerekli verileri box içine aktar.
